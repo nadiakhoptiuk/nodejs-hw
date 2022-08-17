@@ -15,7 +15,7 @@ const schema = Joi.object({
   phone: Joi.string().required(),
 });
 
-router.get("/", async (req, res, next) => {
+router.get("/", async (req, res) => {
   try {
     const contactsList = await getContactsList();
     res.status(200).send(contactsList);
@@ -24,7 +24,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/:contactId", async (req, res, next) => {
+router.get("/:contactId", async (req, res) => {
   try {
     const id = req.params.contactId;
     const defineContact = await getContactById(id);
@@ -54,7 +54,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.delete("/:contactId", async (req, res, next) => {
+router.delete("/:contactId", async (req, res) => {
   try {
     const id = req.params.contactId;
 
@@ -65,7 +65,7 @@ router.delete("/:contactId", async (req, res, next) => {
   }
 });
 
-router.put("/:contactId", async (req, res, next) => {
+router.put("/:contactId", async (req, res) => {
   try {
     const data = schema.validate(req.body);
 
