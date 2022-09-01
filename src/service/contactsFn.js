@@ -17,13 +17,13 @@ async function deleteContactById(contactId) {
   const defineContact = Contact.findOneAndRemove({ _id: contactId });
 
   if (!defineContact) {
-    throw new Error();
+    throw new Error("Not found");
   }
 
   return defineContact;
 }
 
-async function addContact({ name, email, phone, favorite }) {
+async function addContact({ name, email, phone, favorite = false }) {
   return await Contact.create({ name, email, phone, favorite });
 }
 

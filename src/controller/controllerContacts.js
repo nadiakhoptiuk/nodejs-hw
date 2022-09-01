@@ -1,133 +1,101 @@
-const Joi = require("joi");
+const { Contact } = require("../db/contactsSchema");
 const {
   getContactsList,
   getContactById,
   addContact,
   deleteContactById,
   updateContact,
-} = require("../models/contactsFn");
+} = require("../service/contactsFn");
 
-const createSchema = Joi.object({
-  name: Joi.string().required(),
-  email: Joi.string().required(),
-  phone: Joi.string().required(),
-  favorite: Joi.boolean().required(),
-});
-
-const updateStatusSchema = Joi.object({
-  favorite: Joi.boolean().required(),
-});
-
-const getAll = async (req, res) => {
+const getAll = async (req, res, next) => {
   try {
     const contactsList = await getContactsList();
 
-    res.json({
+    return res.json({
       status: "success",
       code: 200,
       data: { contactsList: contactsList },
     });
   } catch (error) {
-    res.status(404).json({ message: "Not found" }); //TODO
+    console.error(error);
+    next(error);
   }
 };
 
-const getById = async (req, res) => {
+const getById = async (req, res, next) => {
   try {
     const id = req.params.contactId;
 
     const defineContact = await getContactById(id);
 
-    res.json({
+    return res.json({
       status: "success",
       code: 200,
       data: { contact: defineContact },
     });
   } catch (error) {
-    res.status(404).json({ message: "Contact not found" }); //TODO
+    console.error(error);
+    next(error);
   }
 };
 
-const create = async (req, res) => {
+const create = async (req, res, next) => {
   try {
-    const data = createSchema.validate(req.body);
+    const existingContactWithSameEmail = await Contact.findOne({
+      email: req.body.email,
+    });
 
-    if (data.error) {
-      const errorField = data.error.details[0].context.key;
-
-      throw new Error(`${errorField}`);
+    if (existingContactWithSameEmail) {
+      return res.status(404).json({
+        message: "User with such email already exists",
+      });
     }
 
-    const newContact = await addContact(data.value);
+    const newContact = await addContact(req.body);
 
-    res.status(201).json({
+    return res.status(201).json({
       status: "success",
       code: 201,
       message: "New contact has been successfully created!",
       data: { contact: newContact },
     });
   } catch (error) {
-    res
-      .status(400)
-      .json({ message: `missing required ${error.message} field` }); //TODO
+    console.error(error);
+    next(error);
   }
 };
 
-const remove = async (req, res) => {
+const remove = async (req, res, next) => {
   try {
     const id = req.params.contactId;
 
     await deleteContactById(id);
-    res.json({
+    return res.json({
       status: "success",
       code: 200,
       message: "Contact has been successfully deleted!",
     });
   } catch (error) {
-    res.status(404).json({ message: "Contact not found" }); //TODO
+    console.error(error);
+    next(error);
   }
 };
 
-const update = async (req, res) => {
+const update = async (req, res, next) => {
   try {
-    const updatedInfo = req.body;
     const id = req.params.contactId;
 
-    const updatedContact = await updateContact(id, updatedInfo);
-    res.status(200).json({
+    const updatedContact = await updateContact(id, req.body);
+
+    return res.status(200).json({
       status: "success",
       message: "Contact has been successfully updated!",
       data: { contact: updatedContact },
     });
   } catch (error) {
-    res.status(404).json({ message: "Not found" }); //TODO
+    console.error(error);
+    next(error);
   }
 };
 
-const updateStatus = async (req, res) => {
-  try {
-    const id = req.params.contactId;
-
-    const data = updateStatusSchema.validate(req.body);
-
-    if (data.error) {
-      res.status(400).json({
-        message: "Missing field favorite",
-      });
-    }
-
-    const updatedContact = await updateContact(id, data.value);
-
-    res.status(200).json({
-      status: "success",
-      message: "Contact status has been successfully updated!",
-      data: { contact: updatedContact },
-    });
-  } catch (error) {
-    res
-      .status(400)
-      .json({ message: `missing required ${error.message} field` }); //TODO
-  }
-};
-
-module.exports = { getAll, getById, create, update, updateStatus, remove };
+module.exports = { getAll, getById, create, update, remove };
