@@ -1,88 +1,23 @@
 const express = require("express");
-const Joi = require("joi");
+
 const {
-  getContactsList,
-  getContactById,
-  deleteContactById,
-  addContact,
-  updateContact,
-} = require("../../models/contactsFn");
+  getAll,
+  getById,
+  create,
+  remove,
+  update,
+} = require("../../controller/controllerContacts");
 
 const router = express.Router();
-const schema = Joi.object({
-  name: Joi.string().required(),
-  email: Joi.string().required(),
-  phone: Joi.string().required(),
-});
 
-router.get("/", async (req, res) => {
-  try {
-    const contactsList = await getContactsList();
-    res.status(200).send(contactsList);
-  } catch (error) {
-    res.status(404).json({ message: "Not found" });
-  }
-});
+router.get("/", getAll);
 
-router.get("/:contactId", async (req, res) => {
-  try {
-    const id = req.params.contactId;
-    const defineContact = await getContactById(id);
+router.get("/:contactId", getById);
 
-    res.status(200).send(defineContact);
-  } catch (error) {
-    res.status(404).json({ message: "Not found" });
-  }
-});
+router.post("/", create);
 
-router.post("/", async (req, res) => {
-  try {
-    const data = schema.validate(req.body);
+router.delete("/:contactId", remove);
 
-    if (data.error) {
-      const errorField = data.error.details[0].context.key;
-
-      throw new Error(`${errorField}`);
-    }
-
-    const newContact = await addContact(data.value);
-    res.status(201).send(newContact);
-  } catch (error) {
-    res
-      .status(400)
-      .json({ message: `missing required ${error.message} field` });
-  }
-});
-
-router.delete("/:contactId", async (req, res) => {
-  try {
-    const id = req.params.contactId;
-
-    await deleteContactById(id);
-    res.status(200).send({ message: "contact deleted" });
-  } catch (error) {
-    res.status(404).json({ message: "Not found" });
-  }
-});
-
-router.put("/:contactId", async (req, res) => {
-  try {
-    const data = schema.validate(req.body);
-
-    if (data.error) {
-      const errorField = data.error.details[0].context.key;
-
-      return res
-        .status(400)
-        .json({ message: `missing required ${errorField} field` });
-    }
-
-    const id = req.params.contactId;
-    const updatedContact = await updateContact(id, data.value);
-    res.status(200).send(updatedContact);
-  } catch (error) {
-    res.status(404).json({ message: "Not found" });
-  }
-});
+router.put("/:contactId", update);
 
 module.exports = router;
