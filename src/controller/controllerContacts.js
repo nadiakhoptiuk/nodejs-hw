@@ -7,10 +7,14 @@ const {
   updateContact,
 } = require("../models/contactsFn");
 
-const schema = Joi.object({
+const createSchema = Joi.object({
   name: Joi.string().required(),
   email: Joi.string().required(),
   phone: Joi.string().required(),
+  favorite: Joi.boolean().required(),
+});
+
+const updateStatusSchema = Joi.object({
   favorite: Joi.boolean().required(),
 });
 
@@ -40,15 +44,13 @@ const getById = async (req, res) => {
       data: { contact: defineContact },
     });
   } catch (error) {
-    console.log(error.message);
-
     res.status(404).json({ message: "Contact not found" }); //TODO
   }
 };
 
 const create = async (req, res) => {
   try {
-    const data = schema.validate(req.body);
+    const data = createSchema.validate(req.body);
 
     if (data.error) {
       const errorField = data.error.details[0].context.key;
@@ -92,9 +94,8 @@ const update = async (req, res) => {
     const id = req.params.contactId;
 
     const updatedContact = await updateContact(id, updatedInfo);
-    res.json({
+    res.status(200).json({
       status: "success",
-      code: 200,
       message: "Contact has been successfully updated!",
       data: { contact: updatedContact },
     });
@@ -103,4 +104,30 @@ const update = async (req, res) => {
   }
 };
 
-module.exports = { getAll, getById, create, update, remove };
+const updateStatus = async (req, res) => {
+  try {
+    const id = req.params.contactId;
+
+    const data = updateStatusSchema.validate(req.body);
+
+    if (data.error) {
+      res.status(400).json({
+        message: "Missing field favorite",
+      });
+    }
+
+    const updatedContact = await updateContact(id, data.value);
+
+    res.status(200).json({
+      status: "success",
+      message: "Contact status has been successfully updated!",
+      data: { contact: updatedContact },
+    });
+  } catch (error) {
+    res
+      .status(400)
+      .json({ message: `missing required ${error.message} field` }); //TODO
+  }
+};
+
+module.exports = { getAll, getById, create, update, updateStatus, remove };

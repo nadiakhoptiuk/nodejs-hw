@@ -1,24 +1,4 @@
-const fs = require("fs");
-// const shortId = require("short-uuid");
-const path = require("path");
-
 const { Contact } = require("../db/contactsSchema");
-
-const fsPromises = fs.promises;
-const contactsPath = path.join(__dirname, "contacts.json");
-
-async function readListOfContacts() {
-  const list = await fsPromises.readFile(`${contactsPath}`, "utf-8");
-  return JSON.parse(list);
-}
-
-async function writeContactsToFile(array) {
-  return await fsPromises.writeFile(
-    `${contactsPath}`,
-    `${JSON.stringify(array)}`,
-    "utf-8"
-  );
-}
 
 async function getContactsList() {
   return Contact.find();
