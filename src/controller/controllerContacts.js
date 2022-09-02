@@ -54,8 +54,6 @@ const create = async (req, res, next) => {
     const newContact = await addContact(req.body);
 
     return res.status(201).json({
-      status: "success",
-      code: 201,
       message: "New contact has been successfully created!",
       data: { contact: newContact },
     });
