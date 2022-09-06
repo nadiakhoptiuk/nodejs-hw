@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-const createSchema = Joi.object({
+const createContactSchema = Joi.object({
   name: Joi.string()
     .trim()
     .min(3)
@@ -24,11 +24,11 @@ const createSchema = Joi.object({
   favorite: Joi.boolean(),
 });
 
-const updateStatusSchema = Joi.object({
+const updateContactStatusSchema = Joi.object({
   favorite: Joi.boolean().required(),
 });
 
-const updateSchema = Joi.object({
+const updateContactSchema = Joi.object({
   name: Joi.string()
     .trim()
     .pattern(/^[a-zA-Z0-9 ]+$/)
@@ -52,7 +52,7 @@ const updateSchema = Joi.object({
 }).min(1);
 
 module.exports = {
-  createSchema,
-  updateSchema,
-  updateStatusSchema,
+  createContactSchema,
+  updateContactSchema,
+  updateContactStatusSchema,
 };

@@ -1,10 +1,10 @@
 const express = require("express");
 const { validate } = require("../../middlewares/validate");
 const {
-  createSchema,
-  updateSchema,
-  updateStatusSchema,
-} = require("../../service/schemas");
+  createContactSchema,
+  updateContactSchema,
+  updateContactStatusSchema,
+} = require("../../service/contacts/contactsSchemasValidate");
 const {
   getAll,
   getById,
@@ -19,12 +19,16 @@ router.get("/", getAll);
 
 router.get("/:contactId", getById);
 
-router.post("/", validate(createSchema), create);
+router.post("/", validate(createContactSchema), create);
 
 router.delete("/:contactId", remove);
 
-router.put("/:contactId", validate(updateSchema), update);
+router.put("/:contactId", validate(updateContactSchema), update);
 
-router.patch("/:contactId/favorite", validate(updateStatusSchema), update);
+router.patch(
+  "/:contactId/favorite",
+  validate(updateContactStatusSchema),
+  update
+);
 
 module.exports = router;

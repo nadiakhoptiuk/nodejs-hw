@@ -5,7 +5,7 @@ const {
   addContact,
   deleteContactById,
   updateContact,
-} = require("../service/contactsFn");
+} = require("../service/contacts/contactsFn");
 
 const getAll = async (req, res, next) => {
   try {
