@@ -14,4 +14,14 @@ const createUserSchema = Joi.object({
   subscription: Joi.string().valid("starter", "pro", "business"),
 });
 
-module.exports = { createUserSchema };
+const logInUserSchema = Joi.object({
+  password: Joi.string()
+    .trim()
+    .rule({
+      message: "password must contains only of symbols a-z, A-Z, 0-9",
+    })
+    .required(),
+  email: Joi.string().trim().required(),
+});
+
+module.exports = { createUserSchema, logInUserSchema };
