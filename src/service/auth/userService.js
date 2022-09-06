@@ -29,11 +29,9 @@ async function logInUser({ password, email }) {
     throw new NotFound("User with such email does not exists");
   }
 
-  const existingUserPasswordHash = await passwordHash(password);
-
   const isPasswordCorrect = await checkPassword(
     password,
-    existingUserPasswordHash
+    existingUser.password
   );
 
   if (!isPasswordCorrect) {
