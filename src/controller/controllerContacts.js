@@ -7,7 +7,7 @@ const {
   updateContact,
 } = require("../service/contacts/contactsFn");
 
-const getAll = async (req, res, next) => {
+const getAll = async (_, res, next) => {
   try {
     const contactsList = await getContactsList();
 
