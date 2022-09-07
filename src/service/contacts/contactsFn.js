@@ -30,14 +30,17 @@ async function addContact({ name, email, phone, favorite = false }) {
 async function updateContact(contactId, body) {
   const defineContact = await Contact.findOneAndUpdate(
     { _id: contactId },
-    body
+    body,
+    {
+      new: true,
+    }
   );
 
   if (!defineContact) {
     throw new Error();
   }
 
-  return await Contact.findOne({ _id: contactId });
+  return defineContact;
 }
 
 module.exports = {

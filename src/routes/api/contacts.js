@@ -12,21 +12,23 @@ const {
   remove,
   update,
 } = require("../../controller/controllerContacts");
+const { authorize } = require("../../middlewares/authorize");
 
 const router = express.Router();
 
-router.get("/", getAll);
+router.get("/", authorize, getAll);
 
-router.get("/:contactId", getById);
+router.get("/:contactId", authorize, getById);
 
-router.post("/", validate(createContactSchema), create);
+router.post("/", authorize, validate(createContactSchema), create);
 
-router.delete("/:contactId", remove);
+router.delete("/:contactId", authorize, remove);
 
-router.put("/:contactId", validate(updateContactSchema), update);
+router.put("/:contactId", authorize, validate(updateContactSchema), update);
 
 router.patch(
   "/:contactId/favorite",
+  authorize,
   validate(updateContactStatusSchema),
   update
 );

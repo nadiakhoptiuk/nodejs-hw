@@ -42,7 +42,13 @@ async function logInUser({ password, email }) {
 
   const token = await generateToken(existingUser);
 
-  return { existingUser, token };
+  return await User.findOneAndUpdate(
+    { email },
+    { token: token },
+    {
+      new: true,
+    }
+  );
 }
 
 async function getCurrentUser(id) {

@@ -25,11 +25,11 @@ const register = async (req, res, next) => {
 
 const logIn = async (req, res, next) => {
   try {
-    const { existingUser, token } = await logInUser(req.body);
+    const user = await logInUser(req.body);
 
     return res.status(200).json({
       status: "success",
-      userData: serializeUserSignIn(existingUser, token),
+      userData: serializeUserSignIn(user),
     });
   } catch (error) {
     console.log(error);
@@ -40,6 +40,7 @@ const logIn = async (req, res, next) => {
 const current = async (req, res, next) => {
   try {
     const user = await getCurrentUser(req.userId);
+
     return res.status(200).json({
       status: "success",
       userData: serializeCurrentUser(user),
@@ -50,4 +51,18 @@ const current = async (req, res, next) => {
   }
 };
 
-module.exports = { register, logIn, current };
+const logOut = async (req, res, next) => {
+  try {
+    const user = await getCurrentUser(req.userId);
+
+    return res.status(200).json({
+      status: "success",
+      userData: serializeCurrentUser(user),
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+module.exports = { register, logIn, current, logOut };

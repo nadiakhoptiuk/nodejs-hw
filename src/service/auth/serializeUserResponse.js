@@ -6,14 +6,14 @@ function serializeUserResponse(user) {
   };
 }
 
-function serializeUserSignIn(user, token) {
+function serializeUserSignIn(user) {
   return {
     user: serializeUserResponse(user),
-    token,
+    token: user.token,
   };
 }
 
-function serializeCurrentUser(user, token) {
+function serializeCurrentUser(user) {
   return {
     email: user.email,
     subscription: user.subscription,
