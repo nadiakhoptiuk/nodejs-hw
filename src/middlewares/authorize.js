@@ -18,8 +18,11 @@ async function authorize(req, res, next) {
       _id: payload.sub,
       token: token,
     });
+    if (!existingUser) {
+      throw new Unauthorized();
+    }
 
-    req.userId = existingUser.id;
+    req.user = existingUser;
   } catch (error) {
     return next(new Unauthorized("Unauthorized"));
   }

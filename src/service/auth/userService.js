@@ -51,14 +51,18 @@ async function logInUser({ password, email }) {
   );
 }
 
-async function getCurrentUser(id) {
-  const existingUser = await User.findById(id);
+async function logOutUser(id) {
+  const existedUser = await User.findOneAndUpdate(
+    { _id: id },
+    { token: null },
+    { new: true }
+  );
 
-  if (!existingUser) {
+  if (!existedUser) {
     throw new Unauthorized("Not authorized");
   }
 
-  return existingUser;
+  return existedUser;
 }
 
 async function passwordHash(password) {
@@ -76,4 +80,4 @@ async function generateToken(user) {
   });
 }
 
-module.exports = { createUser, logInUser, getCurrentUser };
+module.exports = { createUser, logInUser, logOutUser };
