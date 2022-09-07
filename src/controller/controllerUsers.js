@@ -1,8 +1,13 @@
 const {
   serializeUserResponse,
   serializeUserSignIn,
+  serializeCurrentUser,
 } = require("../service/auth/serializeUserResponse");
-const { createUser, logInUser } = require("../service/auth/userService");
+const {
+  createUser,
+  logInUser,
+  getCurrentUser,
+} = require("../service/auth/userService");
 
 const register = async (req, res, next) => {
   try {
@@ -32,4 +37,17 @@ const logIn = async (req, res, next) => {
   }
 };
 
-module.exports = { register, logIn };
+const current = async (req, res, next) => {
+  try {
+    const user = await getCurrentUser(req.userId);
+    return res.status(200).json({
+      status: "success",
+      userData: serializeCurrentUser(user),
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+module.exports = { register, logIn, current };

@@ -13,4 +13,15 @@ function serializeUserSignIn(user, token) {
   };
 }
 
-module.exports = { serializeUserResponse, serializeUserSignIn };
+function serializeCurrentUser(user, token) {
+  return {
+    email: user.email,
+    subscription: user.subscription,
+  };
+}
+
+module.exports = {
+  serializeUserResponse,
+  serializeUserSignIn,
+  serializeCurrentUser,
+};

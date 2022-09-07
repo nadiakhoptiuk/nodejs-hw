@@ -2,10 +2,12 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const { User } = require("../../db/userSchema");
-const { Conflict, NotFound, Forbidden } = require("http-errors");
+const { Conflict, NotFound, Forbidden, Unauthorized } = require("http-errors");
 
 dotenv.config();
 const saltRounds = 10;
+const secret = process.env.JWT_SECRET;
+const expiresIn = process.env.JWT_EXPIRES_IN;
 
 async function createUser({ password, email }) {
   const existingUser = await User.findOne({ email });
@@ -43,6 +45,16 @@ async function logInUser({ password, email }) {
   return { existingUser, token };
 }
 
+async function getCurrentUser(id) {
+  const existingUser = await User.findById(id);
+
+  if (!existingUser) {
+    throw new Unauthorized("Not authorized");
+  }
+
+  return existingUser;
+}
+
 async function passwordHash(password) {
   const salt = await bcrypt.genSalt(saltRounds);
   return await bcrypt.hash(password, salt);
@@ -53,9 +65,9 @@ async function checkPassword(password, passwordHash) {
 }
 
 async function generateToken(user) {
-  return jwt.sign({ sub: user._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN || "1d",
+  return jwt.sign({ sub: user._id }, secret, {
+    expiresIn: expiresIn || "1d",
   });
 }
 
-module.exports = { createUser, logInUser };
+module.exports = { createUser, logInUser, getCurrentUser };
