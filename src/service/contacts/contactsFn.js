@@ -1,4 +1,5 @@
 const { Contact } = require("../../db/contactsSchema");
+const { NotFound } = require("http-errors");
 
 async function getContactsList(userId) {
   return Contact.find({ owner: userId });
@@ -11,7 +12,7 @@ async function getContactById(contactId, userId) {
   });
 
   if (!defineContact) {
-    throw new Error();
+    throw new NotFound();
   }
   return defineContact;
 }
@@ -26,7 +27,7 @@ async function deleteContactById(contactId, userId) {
   });
 
   if (!defineContact) {
-    throw new Error("Not found");
+    throw new NotFound();
   }
 
   return defineContact;
@@ -42,7 +43,7 @@ async function updateContact(contactId, body, userId) {
   );
 
   if (!defineContact) {
-    throw new Error();
+    throw new NotFound();
   }
 
   return defineContact;

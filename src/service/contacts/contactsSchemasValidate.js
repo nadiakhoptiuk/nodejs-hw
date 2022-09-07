@@ -5,6 +5,7 @@ const createContactSchema = Joi.object({
     .trim()
     .min(3)
     .max(25)
+    .pattern(/^[a-zA-Z0-9 ]+$/)
     .rule({
       message:
         "Name must contains only of symbols a-z, A-Z, 0-9 and spaces and exist from 3 to 25 symbols",
@@ -13,7 +14,7 @@ const createContactSchema = Joi.object({
   email: Joi.string().trim().email().required(),
   phone: Joi.string()
     .trim()
-    .pattern(/^[a-zA-Z0-9 ]+$/)
+    .pattern(/^[0-9]+$/)
     .min(10)
     .max(13)
     .rule({
