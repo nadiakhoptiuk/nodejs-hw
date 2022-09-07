@@ -1,11 +1,14 @@
 const { Contact } = require("../../db/contactsSchema");
 
-async function getContactsList() {
-  return Contact.find();
+async function getContactsList(userId) {
+  return Contact.find({ owner: userId });
 }
 
-async function getContactById(contactId) {
-  const defineContact = await Contact.findOne({ _id: contactId });
+async function getContactById(contactId, userId) {
+  const defineContact = await Contact.findOne({
+    _id: contactId,
+    owner: userId,
+  });
 
   if (!defineContact) {
     throw new Error();
@@ -13,8 +16,14 @@ async function getContactById(contactId) {
   return defineContact;
 }
 
-async function deleteContactById(contactId) {
-  const defineContact = Contact.findOneAndRemove({ _id: contactId });
+async function addContact({ name, email, phone, favorite = false }, userId) {
+  return await Contact.create({ name, email, phone, favorite, owner: userId });
+}
+async function deleteContactById(contactId, userId) {
+  const defineContact = Contact.findOneAndRemove({
+    _id: contactId,
+    owner: userId,
+  });
 
   if (!defineContact) {
     throw new Error("Not found");
@@ -23,14 +32,10 @@ async function deleteContactById(contactId) {
   return defineContact;
 }
 
-async function addContact({ name, email, phone, favorite = false }) {
-  return await Contact.create({ name, email, phone, favorite });
-}
-
-async function updateContact(contactId, body) {
+async function updateContact(contactId, body, userId) {
   const defineContact = await Contact.findOneAndUpdate(
     { _id: contactId },
-    body,
+    { ...body, owner: userId },
     {
       new: true,
     }
