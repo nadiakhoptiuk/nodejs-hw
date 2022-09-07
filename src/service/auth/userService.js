@@ -51,12 +51,24 @@ async function logInUser({ password, email }) {
   );
 }
 
-async function logOutUser(id) {
+async function logOutUser(userId) {
   const existedUser = await User.findOneAndUpdate(
-    { _id: id },
+    { _id: userId },
     { token: null },
     { new: true }
   );
+
+  if (!existedUser) {
+    throw new Unauthorized("Not authorized");
+  }
+
+  return existedUser;
+}
+
+async function updateSubUser(userId, body) {
+  const existedUser = await User.findOneAndUpdate({ _id: userId }, body, {
+    new: true,
+  });
 
   if (!existedUser) {
     throw new Unauthorized("Not authorized");
@@ -80,4 +92,4 @@ async function generateToken(user) {
   });
 }
 
-module.exports = { createUser, logInUser, logOutUser };
+module.exports = { createUser, logInUser, logOutUser, updateSubUser };

@@ -24,4 +24,8 @@ const logInUserSchema = Joi.object({
   email: Joi.string().trim().required(),
 });
 
-module.exports = { createUserSchema, logInUserSchema };
+const updateUserSubSchema = Joi.object({
+  subscription: Joi.any().valid("starter", "pro", "business").required(),
+});
+
+module.exports = { createUserSchema, logInUserSchema, updateUserSubSchema };
