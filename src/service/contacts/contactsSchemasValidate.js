@@ -1,10 +1,11 @@
 const Joi = require("joi");
 
-const createSchema = Joi.object({
+const createContactSchema = Joi.object({
   name: Joi.string()
     .trim()
     .min(3)
     .max(25)
+    .pattern(/^[a-zA-Z0-9 ]+$/)
     .rule({
       message:
         "Name must contains only of symbols a-z, A-Z, 0-9 and spaces and exist from 3 to 25 symbols",
@@ -13,7 +14,7 @@ const createSchema = Joi.object({
   email: Joi.string().trim().email().required(),
   phone: Joi.string()
     .trim()
-    .pattern(/^[a-zA-Z0-9 ]+$/)
+    .pattern(/^[0-9]+$/)
     .min(10)
     .max(13)
     .rule({
@@ -24,11 +25,11 @@ const createSchema = Joi.object({
   favorite: Joi.boolean(),
 });
 
-const updateStatusSchema = Joi.object({
+const updateContactStatusSchema = Joi.object({
   favorite: Joi.boolean().required(),
 });
 
-const updateSchema = Joi.object({
+const updateContactSchema = Joi.object({
   name: Joi.string()
     .trim()
     .pattern(/^[a-zA-Z0-9 ]+$/)
@@ -41,7 +42,7 @@ const updateSchema = Joi.object({
   email: Joi.string().trim().email(),
   phone: Joi.string()
     .trim()
-    .pattern(/^[+]?[0-9]+$/)
+    .pattern(/^[0-9]+$/)
     .min(10)
     .max(13)
     .rule({
@@ -52,7 +53,7 @@ const updateSchema = Joi.object({
 }).min(1);
 
 module.exports = {
-  createSchema,
-  updateSchema,
-  updateStatusSchema,
+  createContactSchema,
+  updateContactSchema,
+  updateContactStatusSchema,
 };

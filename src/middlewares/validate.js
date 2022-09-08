@@ -3,8 +3,6 @@ function validate(schema) {
     const result = schema.validate(req.body);
 
     if (result.error) {
-      console.log("result.error >>>", result.error.details[0].context);
-
       const errorField = result.error.details[0].context.key;
 
       if (errorField === "favorite") {
