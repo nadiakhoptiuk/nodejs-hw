@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const gravatar = require("gravatar");
 const { User } = require("../../db/userSchema");
 const { Conflict, NotFound, Forbidden, Unauthorized } = require("http-errors");
 
@@ -16,9 +17,12 @@ async function createUser({ password, email }) {
     throw new Conflict("Email in use");
   }
 
+  const avatarURL = gravatar.url(email, { protocol: "https", d: "identicon" });
+
   const newUser = await User.create({
     password: await passwordHash(password),
     email,
+    avatarURL,
   });
 
   return newUser;
