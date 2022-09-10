@@ -1,12 +1,9 @@
 const multer = require("multer");
-const { extname } = require("path");
-const uuid = require("short-uuid");
 
 const storage = multer.diskStorage({
-  destination: "public/avatars",
+  destination: "tmp",
   filename: function (req, file, cb) {
-    const ext = extname(file.originalname);
-    return cb(null, uuid.generate() + ext);
+    return cb(null, file.originalname);
   },
 });
 
