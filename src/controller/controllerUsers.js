@@ -7,6 +7,7 @@ const {
   logInUser,
   logOutUser,
   updateSubUser,
+  updateUserAvatar,
 } = require("../service/auth/userService");
 
 const register = async (req, res, next) => {
@@ -72,4 +73,26 @@ const updateSubscribe = async (req, res, next) => {
   }
 };
 
-module.exports = { register, logIn, current, logOut, updateSubscribe };
+const updateAvatar = async (req, res, next) => {
+  try {
+    const updatedUser = await updateUserAvatar(req.user.id, req.file);
+
+    return res.status(200).json({
+      status: "success",
+      message: "User avatar has been successfully updated!",
+      data: { user: updatedUser },
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+module.exports = {
+  register,
+  logIn,
+  current,
+  logOut,
+  updateSubscribe,
+  updateAvatar,
+};
