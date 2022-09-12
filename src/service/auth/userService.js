@@ -1,3 +1,4 @@
+const { v4: uuidv4 } = require("uuid");
 const fs = require("fs").promises;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -7,6 +8,7 @@ const path = require("path");
 const Jimp = require("Jimp");
 const { User } = require("../../db/userSchema");
 const { Conflict, NotFound, Forbidden, Unauthorized } = require("http-errors");
+const { sendMail } = require("./sendGridService");
 
 dotenv.config();
 const saltRounds = 10;
@@ -22,14 +24,17 @@ async function createUser({ password, email }) {
   }
 
   const avatarURL = gravatar.url(email, { protocol: "https", d: "identicon" });
+  const verificationToken = uuidv4();
+  console.log(verificationToken);
 
-  const newUser = await User.create({
+  await sendMail(email, verificationToken);
+
+  return await User.create({
     password: await passwordHash(password),
     email,
     avatarURL,
+    verificationToken,
   });
-
-  return newUser;
 }
 
 async function verificateUser(verificationToken) {
@@ -49,7 +54,7 @@ async function verificateUser(verificationToken) {
 }
 
 async function logInUser({ password, email }) {
-  const existingUser = await User.findOne({ email });
+  const existingUser = await User.findOne({ email: email, verify: true });
 
   if (!existingUser) {
     throw new NotFound("User with such email does not exists");

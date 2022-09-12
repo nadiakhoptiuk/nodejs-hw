@@ -28,13 +28,13 @@ const register = async (req, res, next) => {
 const verificate = async (req, res, next) => {
   try {
     const verificationToken = req.params.verificationToken;
-    console.log(verificationToken);
 
-    await verificateUser(verificationToken);
+    const user = await verificateUser(verificationToken);
 
     return res.status(200).json({
       status: "success",
       message: "Verification successful",
+      userData: serializeUserResponse(user),
     });
   } catch (error) {
     console.log(error);
