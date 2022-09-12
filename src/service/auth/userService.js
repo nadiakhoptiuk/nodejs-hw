@@ -32,6 +32,22 @@ async function createUser({ password, email }) {
   return newUser;
 }
 
+async function verificateUser(verificationToken) {
+  const existingUser = await User.findOneAndUpdate(
+    {
+      verificationToken: verificationToken,
+    },
+    { verificationToken: null, verify: true },
+    { new: true }
+  );
+
+  if (!existingUser) {
+    throw new NotFound("User not found");
+  }
+
+  return existingUser;
+}
+
 async function logInUser({ password, email }) {
   const existingUser = await User.findOne({ email });
 
@@ -139,4 +155,5 @@ module.exports = {
   logOutUser,
   updateSubUser,
   updateUserAvatar,
+  verificateUser,
 };
