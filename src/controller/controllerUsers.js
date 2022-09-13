@@ -9,6 +9,7 @@ const {
   updateSubUser,
   updateUserAvatar,
   verificateUser,
+  resendVerificationForUser,
 } = require("../service/auth/userService");
 
 const register = async (req, res, next) => {
@@ -29,12 +30,25 @@ const verificate = async (req, res, next) => {
   try {
     const verificationToken = req.params.verificationToken;
 
-    const user = await verificateUser(verificationToken);
+    await verificateUser(verificationToken);
 
     return res.status(200).json({
       status: "success",
       message: "Verification successful",
-      userData: serializeUserResponse(user),
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+const resendVerificationEmail = async (req, res, next) => {
+  try {
+    await resendVerificationForUser(req.body.email);
+
+    return res.status(200).json({
+      status: "success",
+      message: "Verification email sent",
     });
   } catch (error) {
     console.log(error);
@@ -114,4 +128,5 @@ module.exports = {
   logOut,
   updateSubscribe,
   updateAvatar,
+  resendVerificationEmail,
 };

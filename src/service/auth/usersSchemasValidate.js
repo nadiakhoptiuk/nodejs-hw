@@ -24,8 +24,17 @@ const logInUserSchema = Joi.object({
   email: Joi.string().trim().required(),
 });
 
+const resendVerificationUserSchema = Joi.object({
+  email: Joi.string().trim().email().required(),
+});
+
 const updateUserSubSchema = Joi.object({
   subscription: Joi.any().valid("starter", "pro", "business").required(),
 });
 
-module.exports = { createUserSchema, logInUserSchema, updateUserSubSchema };
+module.exports = {
+  createUserSchema,
+  logInUserSchema,
+  updateUserSubSchema,
+  resendVerificationUserSchema,
+};

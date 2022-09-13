@@ -7,7 +7,13 @@ const gravatar = require("gravatar");
 const path = require("path");
 const Jimp = require("Jimp");
 const { User } = require("../../db/userSchema");
-const { Conflict, NotFound, Forbidden, Unauthorized } = require("http-errors");
+const {
+  Conflict,
+  NotFound,
+  Forbidden,
+  Unauthorized,
+  BadRequest,
+} = require("http-errors");
 const { sendMail } = require("./sendGridService");
 
 dotenv.config();
@@ -25,7 +31,6 @@ async function createUser({ password, email }) {
 
   const avatarURL = gravatar.url(email, { protocol: "https", d: "identicon" });
   const verificationToken = uuidv4();
-  console.log(verificationToken);
 
   await sendMail(email, verificationToken);
 
@@ -51,6 +56,22 @@ async function verificateUser(verificationToken) {
   }
 
   return existingUser;
+}
+
+async function resendVerificationForUser(email) {
+  const existingUser = await User.findOne({ email });
+
+  if (!existingUser) {
+    throw new NotFound("User not found");
+  }
+
+  if (existingUser.verify === true) {
+    console.log("hello!!");
+
+    throw new BadRequest("Verification has already been passed");
+  }
+
+  await sendMail(email, existingUser.verificationToken);
 }
 
 async function logInUser({ password, email }) {
@@ -161,4 +182,5 @@ module.exports = {
   updateSubUser,
   updateUserAvatar,
   verificateUser,
+  resendVerificationForUser,
 };
