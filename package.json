@@ -6,8 +6,7 @@
     "start": "cross-env NODE_ENV=production node ./src/server.js",
     "start:dev": "cross-env NODE_ENV=development nodemon ./src/server.js",
     "lint": "eslint **/*.js",
-    "lint:fix": "eslint --fix **/*.js",
-    "send:email": "node ./src/service/auth/sendGridService.js"
+    "lint:fix": "eslint --fix **/*.js"
   },
   "dependencies": {
     "@sendgrid/mail": "^7.7.0",

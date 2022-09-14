@@ -33,7 +33,6 @@ const verificate = async (req, res, next) => {
     await verificateUser(verificationToken);
 
     return res.status(200).json({
-      status: "success",
       message: "Verification successful",
     });
   } catch (error) {
@@ -47,7 +46,6 @@ const resendVerificationEmail = async (req, res, next) => {
     await resendVerificationForUser(req.body.email);
 
     return res.status(200).json({
-      status: "success",
       message: "Verification email sent",
     });
   } catch (error) {
