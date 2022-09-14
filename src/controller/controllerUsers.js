@@ -8,6 +8,8 @@ const {
   logOutUser,
   updateSubUser,
   updateUserAvatar,
+  verificateUser,
+  resendVerificationForUser,
 } = require("../service/auth/userService");
 
 const register = async (req, res, next) => {
@@ -17,6 +19,34 @@ const register = async (req, res, next) => {
     return res.status(201).json({
       status: "success",
       userData: serializeUserResponse(newUser),
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+const verificate = async (req, res, next) => {
+  try {
+    const verificationToken = req.params.verificationToken;
+
+    await verificateUser(verificationToken);
+
+    return res.status(200).json({
+      message: "Verification successful",
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+const resendVerificationEmail = async (req, res, next) => {
+  try {
+    await resendVerificationForUser(req.body.email);
+
+    return res.status(200).json({
+      message: "Verification email sent",
     });
   } catch (error) {
     console.log(error);
@@ -90,9 +120,11 @@ const updateAvatar = async (req, res, next) => {
 
 module.exports = {
   register,
+  verificate,
   logIn,
   current,
   logOut,
   updateSubscribe,
   updateAvatar,
+  resendVerificationEmail,
 };
